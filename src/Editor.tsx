@@ -3,11 +3,12 @@ import { render } from 'react-dom';
 import brace from 'brace';
 import AceEditor from 'react-ace';
 import sharedbAce from "sharedb-ace";
+import { HotKeys } from 'react-hotkeys'
 
-import 'brace/mode/java';
-import 'brace/theme/github';
+import 'brace/mode/javascript';
+import 'brace/theme/cobalt';
 
-interface JSONData {
+export interface JSONData {
     id: number;
 }
 
@@ -46,14 +47,24 @@ class Editor extends React.Component {
 
   // Render editor
   public render() {
-    return <AceEditor
-      mode="java"
-      theme="github"
-      name="UNIQUE_ID_OF_DIV"
-      ref="aceContainer"
-      editorProps={{$blockScrolling: true}}
-    />
+    return (
+	<HotKeys className="Editor" handlers={handlers}>
+        <div className="row editor-react-ace">
+		<AceEditor
+      		mode="javascript"
+      		theme="cobalt"
+      		name="UNIQUE_ID_OF_DIV"
+      		ref="aceContainer"
+      		editorProps={{$blockScrolling: Infinity}}
+    	/>
+        </div>
+    </HotKeys>
+    )
   }
+}
+
+const handlers = {
+  goGreen: () => {}
 }
 
 export default Editor;
