@@ -13,26 +13,42 @@ export interface JSONData {
 }
 
 class Editor extends React.Component {
+    
+  private id: string;
 
-  get(url: string, callback: (data: JSONData) => void){
+  private get(url: string, callback: (data: JSONData) => void){
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
         callback(JSON.parse(xmlhttp.responseText));
+        console.log(JSON.parse(xmlhttp.responseText).id);
+        this.id = JSON.parse(xmlhttp.responseText).id;
+        console.log("ID = " + JSON.parse(xmlhttp.responseText).id);
       }
     }
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     // as any to bypass typescript type checking. might not need in later version if react-ace supports typescript
     // this editor is the same as the one in line 5 of index.js of sharedb-ace-example 
     let editor = (this.refs.aceContainer as any).editor
     const session = editor.getSession();
-    this.get("http://localhost:3000/gists/latest", function(data: JSONData) {
+    let url;
+
+    //this.id = "8c951f40-43dc-11e9-b2ac-c9cd9b480d09";
+    if (this.id == null) {
+        console.log("latest");
+        url = "http://localhost:4000/gists/latest";
+    } else {
+        console.log("id");
+        url = "http://localhost:4000/gists/" + this.id;
+    }
+
+    this.get(url, function(data: JSONData) {
       const ShareAce = new sharedbAce(data.id, {
-        WsUrl: "ws://localhost:3000/ws",
+        WsUrl: "ws://localhost:4000/ws",
         pluginWsUrl: "ws://localhost:3108/ws",
         namespace: "codepad",
       });
@@ -43,6 +59,8 @@ class Editor extends React.Component {
         ]);
       });
     })
+
+    console.log("1ID = " + this.id);
   }
 
   // Render editor
@@ -60,6 +78,7 @@ class Editor extends React.Component {
         </div>
     </HotKeys>
     )
+    console.log("2ID = " + this.id);
   }
 }
 
