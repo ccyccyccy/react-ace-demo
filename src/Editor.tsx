@@ -13,7 +13,6 @@ export interface JSONData {
 }
 
 class Editor extends React.Component {
-    
   private id: string;
 
   private get(url: string, callback: (data: JSONData) => void){
@@ -21,8 +20,8 @@ class Editor extends React.Component {
     xmlhttp.onreadystatechange = function(){
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
         callback(JSON.parse(xmlhttp.responseText));
-        console.log(JSON.parse(xmlhttp.responseText).id);
         this.id = JSON.parse(xmlhttp.responseText).id;
+        this.setState({id: JSON.parse(xmlhttp.responseText).id});
         console.log("ID = " + JSON.parse(xmlhttp.responseText).id);
       }
     }
@@ -40,15 +39,15 @@ class Editor extends React.Component {
     //this.id = "8c951f40-43dc-11e9-b2ac-c9cd9b480d09";
     if (this.id == null) {
         console.log("latest");
-        url = "http://localhost:4000/gists/latest";
+        url = "http://localhost:8080/gists/latest";
     } else {
         console.log("id");
-        url = "http://localhost:4000/gists/" + this.id;
+        url = "http://localhost:8080/gists/" + this.id;
     }
 
     this.get(url, function(data: JSONData) {
       const ShareAce = new sharedbAce(data.id, {
-        WsUrl: "ws://localhost:4000/ws",
+        WsUrl: "ws://localhost:8080/ws",
         pluginWsUrl: "ws://localhost:3108/ws",
         namespace: "codepad",
       });
@@ -59,8 +58,6 @@ class Editor extends React.Component {
         ]);
       });
     })
-
-    console.log("1ID = " + this.id);
   }
 
   // Render editor
@@ -78,7 +75,6 @@ class Editor extends React.Component {
         </div>
     </HotKeys>
     )
-    console.log("2ID = " + this.id);
   }
 }
 
